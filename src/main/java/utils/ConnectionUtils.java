@@ -44,7 +44,7 @@ public class ConnectionUtils {
     /**
      * 把连接和当前线程进行解绑
      */
-    public void remove() {
+    public void removeConnection() {
         tl.remove();
     }
 }
