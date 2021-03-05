@@ -3,6 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         https://www.springframework.org/schema/beans/spring-beans.xsd
@@ -10,6 +11,8 @@
         https://www.springframework.org/schema/util/spring-util.xsd
         http://www.springframework.org/schema/context
         https://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/aop
+        https://www.springframework.org/schema/aop/spring-aop.xsd
        ">
 
     <!-- bean definitions here -->
@@ -29,7 +32,19 @@
     <context:component-scan base-package="utils"/>
     <context:component-scan base-package="transaction"/>
 
-    <!--配置代理的service-->
-    <bean id="transactionProxyAccountService" factory-bean="transactionProxyUtils" factory-method="getAccountService"/>
+    <!--    &lt;!&ndash;配置代理的service&ndash;&gt;-->
+    <!--    <bean id="transactionProxyAccountService" factory-bean="transactionProxyUtils" factory-method="getAccountService"/>-->
 
+    <!-- aop相关的节点配置 -->
+    <aop:config>
+        <!-- 切入点  标记哪些类的哪些方法在执行的时候会应用Spring配置的通知进行增强 -->
+        <aop:pointcut expression="execution(* services..*.*(..))" id="transactionPointcut"/>
+        <!-- 配置切面类的节点  作用主要就是整合通知和切入点 -->
+        <aop:aspect ref="transactionManager">
+            <aop:before method="beginTransaction" pointcut-ref="transactionPointcut"/>
+            <aop:after-returning method="commit" pointcut-ref="transactionPointcut"/>
+            <aop:after method="release" pointcut-ref="transactionPointcut"/>
+            <aop:after-throwing method="rollback" pointcut-ref="transactionPointcut"/>
+        </aop:aspect>
+    </aop:config>
 </beans>
