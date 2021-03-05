@@ -36,8 +36,8 @@ public class AccountServiceImpl implements AccountService {
         target.setMoney(target.getMoney() + money);
         // 更新原始账号
         accountDao.updateAccount(source);
-//        // 造异常
-//        int i = 1 / 0;
+        // 造异常
+        int i = 1 / 0;
         // 更新目标账号
         accountDao.updateAccount(target);
         System.out.println("转账完毕");
